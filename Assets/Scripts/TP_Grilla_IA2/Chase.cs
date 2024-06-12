@@ -39,8 +39,8 @@ public class Chase : IState
         }
         AddForce(Pursuit(currentTarget.transform.position+currentTarget.Velocity));
         
-        _hunter.gameObject.transform.position += _hunter.velocity * Time.deltaTime;
-        _hunter.gameObject.transform.forward = _hunter.velocity;
+        _hunter.gameObject.transform.position += _hunter._velocity * Time.deltaTime;
+        _hunter.gameObject.transform.forward = _hunter._velocity;
         _counter -= Time.deltaTime;
 
         if(_counter<=0)
@@ -69,7 +69,7 @@ public class Chase : IState
         desired.Normalize();
         desired *= _hunter.maxVelocity;
         
-        var steering = desired - _hunter.velocity;
+        var steering = desired - _hunter._velocity;
         steering = Vector3.ClampMagnitude(steering, _hunter.maxForce);
 
         return steering;
@@ -77,8 +77,8 @@ public class Chase : IState
 
     public void AddForce(Vector3 dir)
     {
-        _hunter.velocity += dir;
+        _hunter._velocity += dir;
 
-        _hunter.velocity = Vector3.ClampMagnitude(_hunter.velocity, _hunter.maxVelocity);
+        _hunter._velocity = Vector3.ClampMagnitude(_hunter._velocity, _hunter.maxVelocity);
     }
 }

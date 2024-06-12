@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Hunter : MonoBehaviour
 {
-    FSM _fsm;
+    private enum States { Idle, Patrol, Chase }
+    private FSM<States> _fsm;
     public Hunter hunter;
 
-    [HideInInspector]public Vector3 velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
+    private Vector3 _velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
 
     public float viewRadius;
 
@@ -17,21 +18,87 @@ public class Hunter : MonoBehaviour
     public float counterIdle;
     public float counter;
 
-    public Transform[] wayPoints;
+    [SerializeField]private Transform[] _wayPoints;
     public Boid[] target;
 
-    private void Start()
-    {
-        _fsm = new FSM();
+    private int _actualIndex;
 
-        _fsm.CreateState("Idle", new Idle(hunter,_fsm));
-        _fsm.CreateState("Patrol", new Patrol(_fsm, wayPoints, hunter));
-        _fsm.CreateState("Chase", new Chase(_fsm, target, hunter));
-        _fsm.ChangeState("Chase");
+
+    private void Awake()
+    {
+        SetUpFSM();
     }
+
+    void SetUpFSM()
+    {
+        var idle = new EventState();
+        idle.OnEnter = () => counter = counterIdle;
+        idle.OnUpdate = () =>
+        {
+              counter -= Time.deltaTime;
+              if (counter <= 0)
+              {
+                  _fsm.ChangeState(States.Patrol);
+              }
+        };
+
+        var patrol = new EventState();
+        patrol.OnUpdate = () =>
+        {
+              AddForce(Seek(_wayPoints[_actualIndex].position));
+
+              if (Vector3.Distance(transform.position, _wayPoints[_actualIndex].position) <= 0.3f)
+              {
+                  _actualIndex++;
+                  if (_actualIndex >= _wayPoints.Length)
+                      _actualIndex = 0;
+              }
+
+              transform.position += _velocity * Time.deltaTime;
+              transform.forward = _velocity;
+              counter -= Time.deltaTime;
+
+              if (counter <= 0)
+                  _fsm.ChangeState(States.Idle);
+
+              foreach (var item in GameManager.Instance.boids)
+              {
+                  if (Vector3.Distance(item.transform.position, transform.position) <= viewRadius)
+                      _fsm.ChangeState(States.Chase);
+              }
+        };
+
+
+
+
+        _fsm = new FSM<States>();
+        _fsm.CreateState(States.Idle, idle);
+        _fsm.CreateState(States.Patrol, patrol);
+        _fsm.ChangeState(States.Idle);
+    }
+
     private void Update()
     {
-        _fsm.Execute();
+        _fsm.Update();
+    }
+
+    Vector3 Seek(Vector3 target)
+    {
+        var desired = target - transform.position;
+        desired.Normalize();
+        desired *= maxVelocity;
+
+        var steering = desired - _velocity;
+        steering = Vector3.ClampMagnitude(steering, maxForce);
+
+        return steering;
+    }
+
+    public void AddForce(Vector3 dir)
+    {
+        _velocity += dir;
+
+        _velocity = Vector3.ClampMagnitude(_velocity, maxVelocity);
     }
 
     private void OnDrawGizmos()

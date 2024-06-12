@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChaseEnemy : IState
+public class ChaseEnemy : State
 {
     FSM _fms;
     Transform _target;
