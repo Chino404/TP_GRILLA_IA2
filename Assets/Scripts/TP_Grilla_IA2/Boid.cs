@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Boid : MonoBehaviour
+public class Boid : GridEntity
 {
     [Header("Radios")]
     public float viewRadius;
@@ -20,35 +20,38 @@ public class Boid : MonoBehaviour
         GameManager.Instance.boids.Add(this); //Me agrego a su lista de Boids
     }
 
-    void Update()
-    {
-        //Huir del cazador
-        if (Vector3.Distance(GameManager.Instance.hunter.transform.position, transform.position) <= viewRadius)
-        {
-            AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
-        }
+    /*  void Update()
+      {
+          //Huir del cazador
+          if (Vector3.Distance(GameManager.Instance.hunter.transform.position, transform.position) <= viewRadius)
+          {
+              AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
+          }
 
-        //Ir a la manzana
-        //else if()
-        //{
+          //Ir a la manzana
+          //else if()
+          //{
 
-        //}
+          //}
 
-        //Flocking
-        else
-            Flocking();
+          //Flocking
+          else
+              Flocking();
+          // Aca hay que hacer que los boids no se vayan a la loma del culo
+         // transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
 
-        transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
-        transform.forward = _velocity; //Que mire para donde se esta moviendo
-    }
-
-    #region FLOCKING
-    void Flocking()
-    {
-        AddForce(Separation(GameManager.Instance.boids ,separationRadius) * GameManager.Instance.weightSeparation);
-        AddForce(Alignment(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightAlignment);
-        AddForce(Cohesion(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightCohesion);
-    }
+          transform.forward = _velocity; //Que mire para donde se esta moviendo
+      }
+    */
+    /*
+      #region FLOCKING
+      void Flocking()
+      {
+          AddForce(Separation(GameManager.Instance.boids ,separationRadius) * GameManager.Instance.weightSeparation);
+          AddForce(Alignment(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightAlignment);
+          AddForce(Cohesion(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightCohesion);*
+}
+*/
 
     Vector3 Separation(List<Boid> boids, float radius)
     {
@@ -123,7 +126,7 @@ public class Boid : MonoBehaviour
 
         return CalculateSteering(desired);
     }
-    #endregion
+
 
     //Calculo la fuerza con la que va a girar su direccion
     Vector3 CalculateSteering(Vector3 desired)

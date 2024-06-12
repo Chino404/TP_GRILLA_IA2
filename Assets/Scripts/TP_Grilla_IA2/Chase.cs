@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chase : IState
+/*public class Chase : IState
 {
     float _counter;
     FSM _fsm;
@@ -81,4 +81,4 @@ public class Chase : IState
 
         _hunter._velocity = Vector3.ClampMagnitude(_hunter._velocity, _hunter.maxVelocity);
     }
-}
+}*/
