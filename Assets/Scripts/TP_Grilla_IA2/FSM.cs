@@ -2,46 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FSM 
+public class FSM <T>
 {
-    //El estado que voy a crear con su nombre y lo q va a hacer
-    Dictionary<string, IState> _states = new Dictionary<string, IState>();
+    private State _actualState;
+    private Dictionary<T, State> _states = new Dictionary<T, State>();
 
-    IState _actualState;
+    public T ActualState { get; private set; }
 
-
-    /// <summary>
-    /// Crear estado y guardarlo en el diccionario
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="state"></param>
-    public void CreateState(string name, IState state)
+    public void CreateState(T elem, State state) => _states[elem] = state;
+  
+    public void ChangeState(T elem)
     {
-        if (!_states.ContainsKey(name))
-            _states.Add(name, state);
+        if (!_states.ContainsKey(elem)) return;
+
+        _actualState?.Exit();
+        _actualState = _states[elem];
+        ActualState = elem;
+        _actualState.Enter();
+
     }
 
-    /// <summary>
-    /// Se va a ejecutar todo el tiempo en el OnUpdate();
-    /// </summary>
-    public void Execute()
-    {
-        _actualState.OnUpdate();
-    }
-
-    /// <summary>
-    /// El estado al que quiero cambiar
-    /// </summary>
-    /// <param name="name"></param>
-    public void ChangeState(string name)
-    {
-        if(_states.ContainsKey(name))
-        {
-            if (_actualState != null)
-                _actualState.OnExit();
-
-            _actualState = _states[name];
-            _actualState.OnEnter();
-        }
-    }
+    public void Update() => _actualState?.Update();
+    public void LateUpdate() => _actualState?.LateUpdate();
+    public void FixedUpdate() => _actualState?.FixedUpdate();
 }

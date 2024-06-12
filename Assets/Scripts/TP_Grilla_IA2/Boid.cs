@@ -25,7 +25,7 @@ public class Boid : MonoBehaviour
         //Huir del cazador
         if (Vector3.Distance(GameManager.Instance.hunter.transform.position, transform.position) <= viewRadius)
         {
-            AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter.velocity));
+            AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
         }
 
         //Ir a la manzana

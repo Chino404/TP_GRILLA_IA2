@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
-public class PathfindingEnemy : IState
+public class PathfindingEnemy : State
 {
     FSM _fsm;
     Transform[] _wayPoints;
