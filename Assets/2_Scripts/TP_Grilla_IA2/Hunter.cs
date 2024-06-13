@@ -16,13 +16,17 @@ public class Hunter : MonoBehaviour
     public float maxForce;
 
     public float counterIdle;
+    public float counterPatrol;
+    public float counterChase;
     public float counter;
 
     [SerializeField]private Transform[] _wayPoints;
-    public Boid[] target;
+    
 
-    private int _actualIndex;
+    public int _actualIndex;
 
+    private float _closestDistance = Mathf.Infinity;
+    private Boid _currentTarget;
 
     private void Awake()
     {
@@ -43,6 +47,7 @@ public class Hunter : MonoBehaviour
         };
 
         var patrol = new EventState();
+        patrol.OnEnter = () => counter=counterPatrol;
         patrol.OnUpdate = () =>
         {
               AddForce(Seek(_wayPoints[_actualIndex].position));
@@ -68,12 +73,43 @@ public class Hunter : MonoBehaviour
               }
         };
 
+        var chase = new EventState();
+        chase.OnEnter = () =>
+        {
+            Debug.Log("entro a chase");
+            counter = counterChase;
+        };
+        chase.OnUpdate = () =>
+        {
+            foreach (Boid target in GameManager.Instance.boids)
+            {
+                float _distance = Vector3.Distance(transform.position, target.transform.position);
 
+                if (_distance < _closestDistance)
+                {
+                    _closestDistance = _distance;
+                    _currentTarget = target;
+                }
+            }
+            AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
 
+            transform.position += _velocity * Time.deltaTime;
+            gameObject.transform.forward = _velocity;
+            counter -= Time.deltaTime;
+
+            if (counter <= 0)
+            {
+                _fsm.ChangeState(States.Idle);
+            }
+
+            else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
+                _fsm.ChangeState(States.Patrol);
+        };
 
         _fsm = new FSM<States>();
         _fsm.CreateState(States.Idle, idle);
         _fsm.CreateState(States.Patrol, patrol);
+        _fsm.CreateState(States.Chase, chase);
         _fsm.ChangeState(States.Idle);
     }
 
@@ -92,6 +128,11 @@ public class Hunter : MonoBehaviour
         steering = Vector3.ClampMagnitude(steering, maxForce);
 
         return steering;
+    }
+
+    Vector3 Pursuit(Vector3 target)
+    {
+        return Seek(target);
     }
 
     public void AddForce(Vector3 dir)
