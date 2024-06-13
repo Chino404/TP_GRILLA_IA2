@@ -34,7 +34,7 @@ public class GridControllerWindow : EditorWindow
         if (!grid.activatedGrid)
             GUI.color = Color.red;
 
-        if(GUILayout.Button("SIN GRILLA", GUILayout.Height(75)))
+        if (GUILayout.Button("SIN GRILLA", GUILayout.Height(75)))
         {
             grid.AreGizmosShutDown = false;
             GameObject.Destroy(boxQ);

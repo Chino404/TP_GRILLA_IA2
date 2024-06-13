@@ -23,8 +23,7 @@ public class Queries : MonoBehaviour
             //como funcion para filtrar le damos una que siempre devuelve true, para que no filtre nada.
             return targetGrid.Query(
                 transform.position + new Vector3(-w, 0, -h),
-                transform.position + new Vector3(w, 0, h),
-                x => true);
+                transform.position + new Vector3(w, 0, h));
         }
         else
         {
@@ -70,7 +69,6 @@ public class Queries : MonoBehaviour
 
         }
     }
-
 
     private void OnGUI()
     {

@@ -5,6 +5,7 @@ using UnityEngine;
 public class GridEntity : MonoBehaviour
 {
 	public event Action<GridEntity> OnMove = delegate {};
+	public event Action<GridEntity> OnDestroyEvent = delegate {};
 	public Vector3 velocity = new Vector3(0, 0, 0);
     public bool onGrid;
     Renderer _rend;
@@ -23,4 +24,9 @@ public class GridEntity : MonoBehaviour
 		transform.position += velocity * Time.deltaTime;
 	    OnMove(this);
 	}
+
+    private void OnDestroy()
+    {
+        OnDestroyEvent(this);
+    }
 }

@@ -7,6 +7,8 @@ using System;
 public class SpatialGrid : MonoBehaviour
 {
     #region Variables
+    public static SpatialGrid Instance;
+
     //punto de inicio de la grilla en X
     public float x;
     //punto de inicio de la grilla en Z
@@ -40,6 +42,8 @@ public class SpatialGrid : MonoBehaviour
     #region FUNCIONES
     private void Awake()
     {
+        Instance = this;
+
         lastPositions = new Dictionary<GridEntity, Tuple<int, int>>();
         buckets = new HashSet<GridEntity>[width, height];
 
@@ -47,6 +51,9 @@ public class SpatialGrid : MonoBehaviour
         for (int i = 0; i < width; i++)
             for (int j = 0; j < height; j++)
                 buckets[i, j] = new HashSet<GridEntity>();
+
+
+        //LOS AGENTES SE TIENEN Q DESTRUIR E INSTANCIAR PERO SIN HACERLO COMO ESTA ABAJO
 
         //P/alumnos: por que no usamos OfType<>() despues del RecursiveWalker() aca?
         var ents = RecursiveWalker(transform)
@@ -56,13 +63,16 @@ public class SpatialGrid : MonoBehaviour
         foreach (var e in ents)
         {
             e.OnMove += UpdateEntity;
+            e.OnDestroyEvent += RemoveEntity;
             UpdateEntity(e);
         }
     }
 
     public void UpdateEntity(GridEntity entity)
     {
+        //Si tenia una posicion antes en la grilla
         var lastPos = lastPositions.ContainsKey(entity) ? lastPositions[entity] : Outside;
+        //La posicion actual en donde estaria en la grilla
         var currentPos = GetPositionInGrid(entity.gameObject.transform.position);
 
         //Misma posición, no necesito hacer nada
@@ -81,6 +91,22 @@ public class SpatialGrid : MonoBehaviour
         }
         else
             lastPositions.Remove(entity);
+    }
+
+    public void RemoveEntity(GridEntity entity)
+    {
+        //Si tenia una posicion antes en la grilla
+        var lastPos = lastPositions.ContainsKey(entity) ? lastPositions[entity] : Outside;
+
+        //Si estoy dentro de la grilla, Lo "sacamos" de la posición anterior
+        if (IsInsideGrid(lastPos))
+        {
+            buckets[lastPos.Item1, lastPos.Item2].Remove(entity);
+
+            //Lo quito de las ultimas posiciones
+            lastPositions.Remove(entity);
+        }
+
     }
 
     public IEnumerable<GridEntity> Query(Vector3 aabbFrom, Vector3 aabbTo, Func<Vector3, bool> filterByPosition)
@@ -119,6 +145,8 @@ public class SpatialGrid : MonoBehaviour
                 from.z <= e.transform.position.z && e.transform.position.z <= to.z
             ).Where(x => filterByPosition(x.transform.position));
     }
+
+    public IEnumerable<GridEntity> Query(Vector3 aabbFrom, Vector3 aabbTo) => Query(aabbFrom, aabbTo, x => true);
 
     public Tuple<int, int> GetPositionInGrid(Vector3 pos)
     {
