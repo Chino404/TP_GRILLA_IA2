@@ -15,6 +15,7 @@ public class Hunter : MonoBehaviour
     public float maxVelocity;
     public float maxForce;
 
+    //remplassar el esto por mana
     public float counterIdle;
     public float counterPatrol;
     public float counterChase;
