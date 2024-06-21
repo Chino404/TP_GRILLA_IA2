@@ -1123,6 +1123,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boids: []
   hunter: {fileID: 1105172818}
+  grid: {fileID: 484479507}
+  width: 100
+  height: 100
+  weightSeparation: 0
+  weightAlignment: 0
+  weightCohesion: 0
 --- !u!4 &421674584
 Transform:
   m_ObjectHideFlags: 0
@@ -3621,6 +3627,14 @@ PrefabInstance:
     - target: {fileID: 8910693331953713586, guid: 1d435b17549fe487b93a7a0a3eec0204, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9222378653451515484, guid: 1d435b17549fe487b93a7a0a3eec0204, type: 3}
+      propertyPath: velocity.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9222378653451515484, guid: 1d435b17549fe487b93a7a0a3eec0204, type: 3}
+      propertyPath: velocity.z
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6508,7 +6522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5877717526057186084, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5877717526057186084, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: m_LocalPosition.z

@@ -8,17 +8,17 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public List<Boid> boids = new List<Boid>();
     public Hunter hunter;
+    public SpatialGrid grid;
+    public float width, height; //anchura y altura
     private void Awake()
     {
         Instance = this;
+
+        
     }
 
-    /*
-    #region TP1 
-    [Header ("TP1")]
-    public Hunter hunter;
-    public List<Boid> boids = new List<Boid>();
-    public int width, height; //anchura y altura
+   
+
 
     [Range(0,4f)]
     public float weightSeparation, weightAlignment, weightCohesion; //El peso que va a tener cada metodo. Cual quiero que sea mas prioritario
@@ -52,8 +52,8 @@ public class GameManager : MonoBehaviour
         Gizmos.DrawLine(downRight, downLeft);
         Gizmos.DrawLine(downLeft, topLeft);
     }
-    #endregion
 
-*/
+
+
 
 }
