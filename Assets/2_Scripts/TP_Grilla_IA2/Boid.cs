@@ -20,8 +20,8 @@ public class Boid : GridEntity
         GameManager.Instance.boids.Add(this); //Me agrego a su lista de Boids
     }
 
-    /*  void Update()
-      {
+    void Update()
+    { /* 
           //Huir del cazador
           if (Vector3.Distance(GameManager.Instance.hunter.transform.position, transform.position) <= viewRadius)
           {
@@ -40,18 +40,18 @@ public class Boid : GridEntity
           // Aca hay que hacer que los boids no se vayan a la loma del culo
          // transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
 
-          transform.forward = _velocity; //Que mire para donde se esta moviendo
-      }
-    */
-    /*
-      #region FLOCKING
-      void Flocking()
-      {
-          AddForce(Separation(GameManager.Instance.boids ,separationRadius) * GameManager.Instance.weightSeparation);
-          AddForce(Alignment(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightAlignment);
-          AddForce(Cohesion(GameManager.Instance.boids, viewRadius) * GameManager.Instance.weightCohesion);*
-}
-*/
+          transform.forward = _velocity; //Que mire para donde se esta moviendo*/
+
+        Flocking();
+        transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
+    }
+    
+        void Flocking()
+        {
+          AddForce(Separation(GameManager.Instance.boids ,separationRadius) );
+          AddForce(Alignment(GameManager.Instance.boids, viewRadius));
+          AddForce(Cohesion(GameManager.Instance.boids, viewRadius));
+        }
 
     Vector3 Separation(List<Boid> boids, float radius)
     {
