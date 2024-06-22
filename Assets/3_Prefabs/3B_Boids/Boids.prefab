@@ -182,7 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
   onGrid: 0
-  viewRadius: 5
-  separationRadius: 2
-  maxSpeed: 5
+  viewRadius: 12
+  separationRadius: 5
+  maxSpeed: 6
   maxForce: 0.01

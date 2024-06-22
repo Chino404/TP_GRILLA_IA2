@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using System.Security.Principal;
 
 public class SpatialGrid : MonoBehaviour
 {
+    public GameObject prefabBoid;
+
+    public List<Boid> boidsList = new ();
+
+    [Range(0, 4f)]
+    public float weightSeparation, weightAlignment, weightCohesion; //El peso que va a tener cada metodo. Cual quiero que sea mas prioritario
+
     #region Variables
     public static SpatialGrid Instance;
 
@@ -56,16 +64,68 @@ public class SpatialGrid : MonoBehaviour
         //LOS AGENTES SE TIENEN Q DESTRUIR E INSTANCIAR PERO SIN HACERLO COMO ESTA ABAJO
 
         //P/alumnos: por que no usamos OfType<>() despues del RecursiveWalker() aca?
-        var ents = RecursiveWalker(transform)
-            .Select(x => x.GetComponent<GridEntity>())
-            .Where(x => x != null);
+        //var ents = RecursiveWalker(transform)
+        //    .Select(x => x.GetComponent<GridEntity>())
+        //    .Where(x => x != null);
 
-        foreach (var e in ents)
+        //foreach (var e in ents)
+        //{
+        //    e.OnMove += UpdateEntity;
+        //    e.OnDestroyEvent += RemoveEntity;
+        //    UpdateEntity(e);
+        //}
+    }
+
+    private void Start()
+    {
+        SpawnInitialBoids(90);
+    }
+
+    private void Update()
+    {
+        //if (boidsList.Count() < 90) SpawnInitialBoids(1);
+
+        foreach (var elem in boidsList)
         {
-            e.OnMove += UpdateEntity;
-            e.OnDestroyEvent += RemoveEntity;
-            UpdateEntity(e);
+            UpdateEntity(elem);
         }
+    }
+
+    public void SpawnInitialBoids(int numBoids)
+    {
+        if(prefabBoid == null)
+        {
+            Debug.LogError("El prefab del Boid no está asignado en SpatialGrid. Asignalo desde el Inspector.");
+            return;
+        }
+
+        for (int i = 0; i < numBoids; i++)
+        {
+            //Escojo un punto Random de la grilla
+            Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(x, x + width * cellWidth),0,UnityEngine.Random.Range(z, z + height * cellHeight));
+
+            GameObject newBoid = Instantiate(prefabBoid, spawnPosition, Quaternion.identity);
+            newBoid.transform.parent = transform;
+
+            var gridEntity = newBoid.GetComponent<GridEntity>();
+
+            if (gridEntity == null) gridEntity = newBoid.AddComponent<GridEntity>();
+
+            gridEntity.OnMove += UpdateEntity;
+            gridEntity.OnDestroyEvent += RemoveEntity;
+            //UpdateEntity(gridEntity);
+        }
+    }
+
+    public Vector3 ApplyBounds(Vector3 pos)
+    {
+        //Me teletransporta al otro lado, el opuesto
+        if (pos.x > width * cellWidth) pos.x = 0;
+        if (pos.x < -0.5f) pos.x = width * cellWidth;
+        if (pos.z > height * cellHeight) pos.z = 0;
+        if (pos.z < -0.5f) pos.z = height * cellHeight;
+
+        return pos;
     }
 
     public void UpdateEntity(GridEntity entity)
