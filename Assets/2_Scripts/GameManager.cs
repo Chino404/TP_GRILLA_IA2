@@ -10,15 +10,11 @@ public class GameManager : MonoBehaviour
     public Hunter hunter;
     public SpatialGrid grid;
     public float width, height; //anchura y altura
+
     private void Awake()
     {
-        Instance = this;
-
-        
+        Instance = this;    
     }
-
-   
-
 
     [Range(0,4f)]
     public float weightSeparation, weightAlignment, weightCohesion; //El peso que va a tener cada metodo. Cual quiero que sea mas prioritario

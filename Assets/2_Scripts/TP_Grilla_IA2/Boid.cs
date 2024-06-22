@@ -17,7 +17,9 @@ public class Boid : GridEntity
     {
         AddForce(new Vector3(Random.Range(-1f,1f), 0, Random.Range(-1f,1f)) * maxSpeed); //Se mueve a una direccion random, multplicado por la velocidad
 
-        GameManager.Instance.boids.Add(this); //Me agrego a su lista de Boids
+        //GameManager.Instance.boids.Add(this); //Me agrego a su lista de Boids
+
+        SpatialGrid.Instance.boidsList.Add(this);
     }
 
     void Update()
@@ -28,30 +30,20 @@ public class Boid : GridEntity
               AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
           }
 
-          //Ir a la manzana
-          //else if()
-          //{
-
-          //}
-
-          //Flocking
           else
-              Flocking();
-          // Aca hay que hacer que los boids no se vayan a la loma del culo
-         // transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
-
-          transform.forward = _velocity; //Que mire para donde se esta moviendo*/
+              Flocking();*/
 
         Flocking();
-        transform.position = GameManager.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
+        transform.position = SpatialGrid.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
+        transform.forward = _velocity;
     }
-    
-        void Flocking()
-        {
-          AddForce(Separation(GameManager.Instance.boids ,separationRadius) );
-          AddForce(Alignment(GameManager.Instance.boids, viewRadius));
-          AddForce(Cohesion(GameManager.Instance.boids, viewRadius));
-        }
+
+    void Flocking()
+    {
+        AddForce(Separation(SpatialGrid.Instance.boidsList, separationRadius) * SpatialGrid.Instance.weightSeparation);
+        AddForce(Alignment(SpatialGrid.Instance.boidsList, viewRadius) * SpatialGrid.Instance.weightAlignment);
+        AddForce(Cohesion(SpatialGrid.Instance.boidsList, viewRadius) * SpatialGrid.Instance.weightCohesion);
+    }
 
     Vector3 Separation(List<Boid> boids, float radius)
     {
@@ -170,5 +162,10 @@ public class Boid : GridEntity
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, viewRadius);
 
+    }
+
+    private void OnDestroy()
+    {
+        SpatialGrid.Instance.boidsList.Remove(this);
     }
 }
