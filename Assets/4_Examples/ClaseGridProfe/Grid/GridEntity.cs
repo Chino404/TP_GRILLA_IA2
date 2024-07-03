@@ -34,10 +34,10 @@ public class GridEntity : MonoBehaviour
 
     public void OnDestroy()
     {
- 
         SpatialGrid.Instance.boidsList.Remove(this);
-        this.gameObject.SetActive(false);
-        //GameManager.Instance.SpawnBoids();
+        OnDestroyEvent(this);
+        Debug.Log("Me destrui");
+
     }
 
 

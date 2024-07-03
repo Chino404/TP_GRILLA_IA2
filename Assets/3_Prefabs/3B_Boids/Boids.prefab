@@ -180,9 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec45f72ff8ff48409fa760c3195d05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
   onGrid: 0
   viewRadius: 12
   separationRadius: 5
   maxSpeed: 6
-  maxForce: 0.01
+  maxForce: 0.05

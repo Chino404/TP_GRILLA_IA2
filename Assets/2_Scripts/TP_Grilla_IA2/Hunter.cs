@@ -8,7 +8,7 @@ public class Hunter : MonoBehaviour
     private FSM<States> _fsm;
     public Hunter hunter;
 
-    private Vector3 _velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
+    [HideInInspector]public Vector3 velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
 
     public float viewRadius;
 
@@ -31,6 +31,7 @@ public class Hunter : MonoBehaviour
 
     private void Awake()
     {
+        if(!GameManager.Instance.hunter) GameManager.Instance.hunter = this;
         SetUpFSM();
     }
 
@@ -61,8 +62,8 @@ public class Hunter : MonoBehaviour
                       _actualIndex = 0;
               }
 
-              transform.position += _velocity * Time.deltaTime;
-              transform.forward = _velocity;
+              transform.position += velocity * Time.deltaTime;
+              transform.forward = velocity;
               counter -= Time.deltaTime;
 
               if (counter <= 0)
@@ -81,6 +82,7 @@ public class Hunter : MonoBehaviour
             Debug.Log("entro a chase");
         //    counter = counterChase;
         };
+
         chase.OnUpdate = () =>
         {
             foreach (Boid target in SpatialGrid.Instance.boidsList)
@@ -97,8 +99,8 @@ public class Hunter : MonoBehaviour
             if(_currentTarget != null)
             AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
 
-            transform.position += _velocity * Time.deltaTime;
-            gameObject.transform.forward = _velocity;
+            transform.position += velocity * Time.deltaTime;
+            gameObject.transform.forward = velocity;
             counter -= Time.deltaTime;
 
             if (counter <= 0)
@@ -128,7 +130,7 @@ public class Hunter : MonoBehaviour
         desired.Normalize();
         desired *= maxVelocity;
 
-        var steering = desired - _velocity;
+        var steering = desired - velocity;
         steering = Vector3.ClampMagnitude(steering, maxForce);
 
         return steering;
@@ -141,9 +143,9 @@ public class Hunter : MonoBehaviour
 
     public void AddForce(Vector3 dir)
     {
-        _velocity += dir;
+        velocity += dir;
 
-        _velocity = Vector3.ClampMagnitude(_velocity, maxVelocity);
+        velocity = Vector3.ClampMagnitude(velocity, maxVelocity);
     }
 
     private void OnDrawGizmos()
