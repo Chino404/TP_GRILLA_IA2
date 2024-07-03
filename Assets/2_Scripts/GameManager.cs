@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public List<Boid> boids = new List<Boid>();
+    //public List<Boid> boids = new List<Boid>();
     public Hunter hunter;
     public SpatialGrid grid;
     public float width, height; //anchura y altura

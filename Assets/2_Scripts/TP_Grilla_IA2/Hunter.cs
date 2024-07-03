@@ -17,8 +17,8 @@ public class Hunter : MonoBehaviour
 
     //remplassar el esto por mana
     public float counterIdle;
-    public float counterPatrol;
-    public float counterChase;
+    public float counterPatrolChase;
+    //public float counterChase;
     public float counter;
 
     [SerializeField]private Transform[] _wayPoints;
@@ -44,11 +44,12 @@ public class Hunter : MonoBehaviour
               if (counter <= 0)
               {
                   _fsm.ChangeState(States.Patrol);
+                counter = counterPatrolChase;
               }
         };
 
         var patrol = new EventState();
-        patrol.OnEnter = () => counter=counterPatrol;
+        patrol.OnEnter = () => /*counter=counterPatrolChase*/ Debug.Log("entre a patrol");
         patrol.OnUpdate = () =>
         {
               AddForce(Seek(_wayPoints[_actualIndex].position));
@@ -67,7 +68,7 @@ public class Hunter : MonoBehaviour
               if (counter <= 0)
                   _fsm.ChangeState(States.Idle);
 
-              foreach (var item in GameManager.Instance.boids)
+              foreach (var item in SpatialGrid.Instance.boidsList)
               {
                   if (Vector3.Distance(item.transform.position, transform.position) <= viewRadius)
                       _fsm.ChangeState(States.Chase);
@@ -78,11 +79,11 @@ public class Hunter : MonoBehaviour
         chase.OnEnter = () =>
         {
             Debug.Log("entro a chase");
-            counter = counterChase;
+        //    counter = counterChase;
         };
         chase.OnUpdate = () =>
         {
-            foreach (Boid target in GameManager.Instance.boids)
+            foreach (Boid target in SpatialGrid.Instance.boidsList)
             {
                 float _distance = Vector3.Distance(transform.position, target.transform.position);
 
