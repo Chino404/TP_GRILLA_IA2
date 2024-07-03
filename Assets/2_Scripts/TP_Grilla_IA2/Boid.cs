@@ -26,10 +26,16 @@ public class Boid : GridEntity
               AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
           }
 
+
           else
               Flocking();*/
 
-        Flocking();
+        if(Vector3.Distance(SpatialGrid.Instance.hunter.transform.position, transform.position) <= viewRadius)
+            AddForce(Evade(SpatialGrid.Instance.hunter.transform.position + SpatialGrid.Instance.hunter.velocity));
+
+        else 
+            Flocking();
+
         transform.position = SpatialGrid.Instance.ApplyBounds(transform.position + _velocity * Time.deltaTime);
         transform.forward = _velocity;
     }
@@ -127,6 +133,7 @@ public class Boid : GridEntity
 
     Vector3 Evade(Vector3 target)
     {
+        Debug.Log("EVADO");
         return Flee(target);
     }
 
