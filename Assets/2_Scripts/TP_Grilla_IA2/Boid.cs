@@ -10,14 +10,10 @@ public class Boid : GridEntity
     [Header("Velocidades")]
     public float maxSpeed;
     public float maxForce; //La fuerza con la cual va a girar (El margen de giro)
-    Vector3 _velocity; //Para donde miro
-    public Vector3 Velocity { get { return _velocity; } }
 
     void Start()
     {
         AddForce(new Vector3(Random.Range(-1f,1f), 0, Random.Range(-1f,1f)) * maxSpeed); //Se mueve a una direccion random, multplicado por la velocidad
-
-        //GameManager.Instance.boids.Add(this); //Me agrego a su lista de Boids
 
         SpatialGrid.Instance.boidsList.Add(this);
     }
@@ -45,7 +41,7 @@ public class Boid : GridEntity
         AddForce(Cohesion(SpatialGrid.Instance.boidsList, viewRadius) * SpatialGrid.Instance.weightCohesion);
     }
 
-    Vector3 Separation(List<Boid> boids, float radius)
+    Vector3 Separation(List<GridEntity> boids, float radius)
     {
         Vector3 desired = Vector3.zero; //Dir deseada
         foreach (var item in boids)
@@ -67,7 +63,7 @@ public class Boid : GridEntity
         return CalculateSteering(desired);
     }
 
-    Vector3 Alignment(List<Boid> boids, float radius)
+    Vector3 Alignment(List<GridEntity> boids, float radius)
     {
         var desired = Vector3.zero;
         int count = 0;
@@ -78,7 +74,7 @@ public class Boid : GridEntity
 
             if(Vector3.Distance(transform.position, item.transform.position) <= radius) //Si la distancia entre los dos es menor al radio...
             {
-                desired += item._velocity; //La direccion donde estanviendo los demas boids la voy sumando a mi dir deseada
+                desired += item.Velocity; //La direccion donde estanviendo los demas boids la voy sumando a mi dir deseada
                 count++; //Sumo al contador de que alguien esta en mi radio
             }
         }
@@ -93,7 +89,7 @@ public class Boid : GridEntity
         return CalculateSteering(desired);
     }
 
-    Vector3 Cohesion(List<Boid> boids, float radius) //Acercarme a la manada
+    Vector3 Cohesion(List<GridEntity> boids, float radius) //Acercarme a la manada
     {
         var desired = transform.position; //Mi posicion
         var count = 0;
@@ -164,8 +160,9 @@ public class Boid : GridEntity
 
     }
 
-    private void OnDestroy()
-    {
-        SpatialGrid.Instance.boidsList.Remove(this);
-    }
+
+
+ 
+
+
 }
