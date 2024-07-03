@@ -6,7 +6,13 @@ public class GridEntity : MonoBehaviour
 {
 	public event Action<GridEntity> OnMove = delegate {};
 	public event Action<GridEntity> OnDestroyEvent = delegate {};
-	public Vector3 velocity = new Vector3(0, 0, 0);
+    protected Vector3 _velocity;
+
+    public Vector3 Velocity
+    {
+        get { return _velocity; }
+    }
+
     public bool onGrid;
     Renderer _rend;
 
@@ -26,8 +32,13 @@ public class GridEntity : MonoBehaviour
 	    OnMove(this);
 	}
 
-    private void OnDestroy()
+    public void OnDestroy()
     {
-        OnDestroyEvent(this);
+ 
+        SpatialGrid.Instance.boidsList.Remove(this);
+        this.gameObject.SetActive(false);
+        //GameManager.Instance.SpawnBoids();
     }
+
+
 }

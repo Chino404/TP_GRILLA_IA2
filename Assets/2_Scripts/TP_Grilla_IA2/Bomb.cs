@@ -20,20 +20,24 @@ public class Bomb : MonoBehaviour
         {
             //Tambien sirve esto para FLOCKING
             var entities = Query().ToFList(); //Lo fuerzo para q no vuelva a calcular todo de vuelta y quede guardado
+            if(entities != null)
             DestroyGridEntities(entities);
         }
     }
 
     void DestroyGridEntities(IEnumerable<GridEntity> entities)
     {
-        foreach (var item in entities)
-            Destroy(item.gameObject);
+       foreach (var item in entities)
+        {
+            item.OnDestroy();
+        }
+  
     }
 
     public IEnumerable<GridEntity> Query()
     {
 
-        //creo una "caja" con las dimensiones deseadas, y luego filtro segun distancia para formar el círculo
+        //creo una "caja" con las dimensiones deseadas, y luego filtro segun distancia para formar el cï¿½rculo
         return _targetGrid.Query(
             transform.position + new Vector3(-_radius, 0, -_radius),
             transform.position + new Vector3(_radius, 0, _radius),

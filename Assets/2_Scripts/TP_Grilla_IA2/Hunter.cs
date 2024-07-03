@@ -93,6 +93,8 @@ public class Hunter : MonoBehaviour
                     _currentTarget = target;
                 }
             }
+
+            if(_currentTarget != null)
             AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
 
             transform.position += _velocity * Time.deltaTime;
