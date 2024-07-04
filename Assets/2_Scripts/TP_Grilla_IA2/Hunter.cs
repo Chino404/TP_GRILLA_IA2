@@ -102,13 +102,12 @@ public class Hunter : MonoBehaviour
             gameObject.transform.forward = velocity;
             counter -= Time.deltaTime;
 
-            if(_currentTarget != null)
-            {
-                if (counter <= 0)
-                {
-                    _fsm.ChangeState(States.Idle);
-                }
-                else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
+            if (counter <= 0)
+                _fsm.ChangeState(States.Idle);
+
+            if (_currentTarget != null)
+            { 
+                if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
                 {
                     StartCoroutine(ExplodeAfterDelay());
                     _fsm.ChangeState(States.Patrol);
@@ -155,7 +154,7 @@ public class Hunter : MonoBehaviour
 
     private IEnumerator ExplodeAfterDelay()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         if (bombita != null)
         {
             bombita.Explode(); // Llama al método Explode de la bomba existente
