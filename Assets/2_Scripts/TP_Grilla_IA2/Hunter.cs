@@ -96,23 +96,23 @@ public class Hunter : MonoBehaviour
                 }
             }
 
-            if(_currentTarget != null)
-            AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
+            if(_currentTarget != null) AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
 
             transform.position += velocity * Time.deltaTime;
             gameObject.transform.forward = velocity;
             counter -= Time.deltaTime;
 
-
-            if (counter <= 0)
+            if(_currentTarget != null)
             {
-                _fsm.ChangeState(States.Idle);
-            }
-            else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
-            {
-        
-                StartCoroutine(ExplodeAfterDelay());
-                _fsm.ChangeState(States.Patrol);
+                if (counter <= 0)
+                {
+                    _fsm.ChangeState(States.Idle);
+                }
+                else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
+                {
+                    StartCoroutine(ExplodeAfterDelay());
+                    _fsm.ChangeState(States.Patrol);
+                }
             }
         };
 

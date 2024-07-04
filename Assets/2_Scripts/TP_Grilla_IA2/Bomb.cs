@@ -8,6 +8,7 @@ public class Bomb : MonoBehaviour
 
     [SerializeField] private SpatialGrid _targetGrid;
     [SerializeField] private float _radius;
+    [SerializeField] private float _timer;
 
     private void Start()
     {
@@ -27,7 +28,8 @@ public class Bomb : MonoBehaviour
     {
        foreach (var item in entities)
         {
-            item.OnDestroy();
+            //item.OnDestroy();
+            Destroy(item.gameObject); //Destruyo el GameObject
         }
   
     }
