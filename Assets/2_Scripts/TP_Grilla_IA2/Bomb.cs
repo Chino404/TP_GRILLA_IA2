@@ -14,15 +14,13 @@ public class Bomb : MonoBehaviour
         _targetGrid = SpatialGrid.Instance;
     }
 
-    private void Update()
+
+
+    public void Explode()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            //Tambien sirve esto para FLOCKING
-            var entities = Query().ToFList(); //Lo fuerzo para q no vuelva a calcular todo de vuelta y quede guardado
-            if(entities != null)
+        var entities = Query().ToFList(); 
+        if (entities != null)
             DestroyGridEntities(entities);
-        }
     }
 
     void DestroyGridEntities(IEnumerable<GridEntity> entities)
