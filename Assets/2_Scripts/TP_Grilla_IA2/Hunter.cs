@@ -96,24 +96,24 @@ public class Hunter : MonoBehaviour
                 }
             }
 
-            if(_currentTarget != null) AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
-
-            transform.position += velocity * Time.deltaTime;
-            gameObject.transform.forward = velocity;
-            counter -= Time.deltaTime;
-
-            if(_currentTarget != null)
+            if (_currentTarget != null)
             {
-                if (counter <= 0)
-                {
-                    _fsm.ChangeState(States.Idle);
-                }
-                else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
+                AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
+
+                transform.position += velocity * Time.deltaTime;
+                gameObject.transform.forward = velocity;
+                counter -= Time.deltaTime;
+
+                if (Vector3.Distance(transform.position, _currentTarget.transform.position) < bombita.radius)
                 {
                     StartCoroutine(ExplodeAfterDelay());
-                    _fsm.ChangeState(States.Patrol);
+
                 }
             }
+
+            else { _fsm.ChangeState(States.Patrol); }
+            if (counter <= 0) _fsm.ChangeState(States.Idle);
+            if(_currentTarget!=null)if (Vector3.Distance(transform.position, _currentTarget.transform.position) > viewRadius) { _fsm.ChangeState(States.Patrol);   }
         };
 
         _fsm = new FSM<States>();
@@ -155,7 +155,7 @@ public class Hunter : MonoBehaviour
 
     private IEnumerator ExplodeAfterDelay()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         if (bombita != null)
         {
             bombita.Explode(); // Llama al método Explode de la bomba existente
