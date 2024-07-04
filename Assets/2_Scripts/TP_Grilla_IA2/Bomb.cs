@@ -8,28 +8,28 @@ public class Bomb : MonoBehaviour
 
     [SerializeField] private SpatialGrid _targetGrid;
     [SerializeField] private float _radius;
+    [SerializeField] private float _timer;
 
     private void Start()
     {
         _targetGrid = SpatialGrid.Instance;
     }
 
-    private void Update()
+
+
+    public void Explode()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            //Tambien sirve esto para FLOCKING
-            var entities = Query().ToFList(); //Lo fuerzo para q no vuelva a calcular todo de vuelta y quede guardado
-            if(entities != null)
+        var entities = Query().ToFList(); 
+        if (entities != null)
             DestroyGridEntities(entities);
-        }
     }
 
     void DestroyGridEntities(IEnumerable<GridEntity> entities)
     {
        foreach (var item in entities)
         {
-            item.OnDestroy();
+            //item.OnDestroy();
+            Destroy(item.gameObject); //Destruyo el GameObject
         }
   
     }

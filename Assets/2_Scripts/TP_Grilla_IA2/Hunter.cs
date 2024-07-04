@@ -7,7 +7,7 @@ public class Hunter : MonoBehaviour
     private enum States { Idle, Patrol, Chase }
     private FSM<States> _fsm;
     public Hunter hunter;
-
+    public Bomb bombita;
     [HideInInspector]public Vector3 velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
 
     public float viewRadius;
@@ -96,20 +96,24 @@ public class Hunter : MonoBehaviour
                 }
             }
 
-            if(_currentTarget != null)
-            AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
+            if(_currentTarget != null) AddForce(Pursuit(_currentTarget.transform.position + _currentTarget.Velocity));
 
             transform.position += velocity * Time.deltaTime;
             gameObject.transform.forward = velocity;
             counter -= Time.deltaTime;
 
-            if (counter <= 0)
+            if(_currentTarget != null)
             {
-                _fsm.ChangeState(States.Idle);
+                if (counter <= 0)
+                {
+                    _fsm.ChangeState(States.Idle);
+                }
+                else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
+                {
+                    StartCoroutine(ExplodeAfterDelay());
+                    _fsm.ChangeState(States.Patrol);
+                }
             }
-
-            else if (Vector3.Distance(transform.position, _currentTarget.transform.position) < 10)
-                _fsm.ChangeState(States.Patrol);
         };
 
         _fsm = new FSM<States>();
@@ -148,6 +152,19 @@ public class Hunter : MonoBehaviour
         velocity = Vector3.ClampMagnitude(velocity, maxVelocity);
     }
 
+
+    private IEnumerator ExplodeAfterDelay()
+    {
+        yield return new WaitForSeconds(1);
+        if (bombita != null)
+        {
+            bombita.Explode(); // Llama al método Explode de la bomba existente
+        }
+        else
+        {
+            Debug.LogError("No bomb reference set on the Hunter.");
+        }
+    }
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

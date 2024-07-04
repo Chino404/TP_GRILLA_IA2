@@ -18,18 +18,9 @@ public class Boid : GridEntity
         SpatialGrid.Instance.boidsList.Add(this);
     }
 
-    void Update()
-    { /* 
-          //Huir del cazador
-          if (Vector3.Distance(GameManager.Instance.hunter.transform.position, transform.position) <= viewRadius)
-          {
-              AddForce(Evade(GameManager.Instance.hunter.transform.position + GameManager.Instance.hunter._velocity));
-          }
-
-
-          else
-              Flocking();*/
-
+    public override void Update()
+    {
+        base.Update();
         if(Vector3.Distance(SpatialGrid.Instance.hunter.transform.position, transform.position) <= viewRadius)
             AddForce(Evade(SpatialGrid.Instance.hunter.transform.position + SpatialGrid.Instance.hunter.velocity));
 
