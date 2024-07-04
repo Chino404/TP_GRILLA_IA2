@@ -7,8 +7,9 @@ using System.Security.Principal;
 
 public class SpatialGrid : MonoBehaviour
 {
+    [SerializeField]private float _time = 2;
+    public Hunter hunter;
     public GameObject prefabBoid;
-
     public List<GridEntity> boidsList = new ();
 
     [Range(0, 4f)]
@@ -78,7 +79,8 @@ public class SpatialGrid : MonoBehaviour
 
     private void Start()
     {
-        SpawnInitialBoids(90);
+        if (!prefabBoid) Debug.LogError("El prefab del Boid no está asignado en SpatialGrid. Asignalo desde el Inspector.");
+        else InitialBoids();
     }
 
     private void Update()
@@ -91,30 +93,53 @@ public class SpatialGrid : MonoBehaviour
         }
     }
 
-    public void SpawnInitialBoids(int numBoids)
+    private void InitialBoids()
     {
-        if(prefabBoid == null)
-        {
-            Debug.LogError("El prefab del Boid no está asignado en SpatialGrid. Asignalo desde el Inspector.");
-            return;
-        }
-
-        for (int i = 0; i < numBoids; i++)
+        for (int i = 0; i < 90; i++)
         {
             //Escojo un punto Random de la grilla
-            Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(x, x + width * cellWidth),0,UnityEngine.Random.Range(z, z + height * cellHeight));
+            Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(x, x + width * cellWidth), 0, UnityEngine.Random.Range(z, z + height * cellHeight));
 
+            //Lo isntancio en ese punto random
             GameObject newBoid = Instantiate(prefabBoid, spawnPosition, Quaternion.identity);
             newBoid.transform.parent = transform;
 
+            //Me guardo en una variable local el componente GirdEntity del boid
             var gridEntity = newBoid.GetComponent<GridEntity>();
 
-            if (gridEntity == null) gridEntity = newBoid.AddComponent<GridEntity>();
+            //Si no lo tiene se lo agrego
+            if (!gridEntity) gridEntity = newBoid.AddComponent<GridEntity>();
 
             gridEntity.OnMove += UpdateEntity;
             gridEntity.OnDestroyEvent += RemoveEntity;
+            gridEntity.OnDestroyEvent += SpawnBoid;
             //UpdateEntity(gridEntity);
         }
+    }
+
+    public void SpawnBoid(GridEntity entity) => StartCoroutine(TimeSpawnBoids(entity));
+
+    IEnumerator TimeSpawnBoids(GridEntity entity)
+    {
+        yield return new WaitForSeconds(_time);
+
+        //Escojo un punto Random de la grilla
+        Vector3 spawnPosition = new Vector3(UnityEngine.Random.Range(x, x + width * cellWidth), 0, UnityEngine.Random.Range(z, z + height * cellHeight));
+
+        //Lo isntancio en ese punto random
+        GameObject newBoid = Instantiate(prefabBoid, spawnPosition, Quaternion.identity);
+        newBoid.transform.parent = transform;
+
+        //Me guardo en una variable local el componente GirdEntity del boid
+        entity = newBoid.GetComponent<GridEntity>();
+
+        //Si no lo tiene se lo agrego
+        if (!entity) entity = newBoid.AddComponent<GridEntity>();
+
+        entity.OnMove += UpdateEntity;
+        entity.OnDestroyEvent += RemoveEntity;
+        entity.OnDestroyEvent += SpawnBoid;
+        //UpdateEntity(gridEntity);
     }
 
     public Vector3 ApplyBounds(Vector3 pos)

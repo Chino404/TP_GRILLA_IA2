@@ -21,11 +21,11 @@ public class GridEntity : MonoBehaviour
         _rend = GetComponent<Renderer>();
     }
 
-    void Update() {
+   public virtual  void Update() {
         if (onGrid)
             _rend.material.color = Color.red;
         else
-            _rend.material.color = Color.gray;
+            _rend.material.color = Color.blue;
 
 		//Optimization: Hacer esto solo cuando realmente se mueve y no en el update
 		//transform.position += velocity * Time.deltaTime;
@@ -34,10 +34,10 @@ public class GridEntity : MonoBehaviour
 
     public void OnDestroy()
     {
- 
         SpatialGrid.Instance.boidsList.Remove(this);
-        this.gameObject.SetActive(false);
-        //GameManager.Instance.SpawnBoids();
+        OnDestroyEvent(this);
+        Debug.Log("Me destrui");
+
     }
 
 
