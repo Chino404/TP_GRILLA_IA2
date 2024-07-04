@@ -113,7 +113,7 @@ public class Hunter : MonoBehaviour
 
             else { _fsm.ChangeState(States.Patrol); }
             if (counter <= 0) _fsm.ChangeState(States.Idle);
-            if (Vector3.Distance(transform.position, _currentTarget.transform.position) > viewRadius) { _fsm.ChangeState(States.Patrol);   }
+            if(_currentTarget!=null)if (Vector3.Distance(transform.position, _currentTarget.transform.position) > viewRadius) { _fsm.ChangeState(States.Patrol);   }
         };
 
         _fsm = new FSM<States>();
