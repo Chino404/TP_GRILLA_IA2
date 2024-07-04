@@ -700,9 +700,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7269047955077803956, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
+      propertyPath: radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7269047955077803956, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: targetGrid
       value: 
       objectReference: {fileID: 484479507}
+    - target: {fileID: 7714468137647363592, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
+      propertyPath: radius
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7714468137647363592, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
+      propertyPath: _radius
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7714468137647363592, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: _targetGrid
       value: 
@@ -714,6 +726,10 @@ PrefabInstance:
     - target: {fileID: 8681802717097411184, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: maxForce
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8681802717097411184, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
+      propertyPath: viewRadius
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8681802717097411184, guid: 2d5b87d60c91c4041ae51ac3f7cb755d, type: 3}
       propertyPath: counterPatrolChase

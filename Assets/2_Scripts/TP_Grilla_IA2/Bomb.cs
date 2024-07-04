@@ -7,8 +7,7 @@ public class Bomb : MonoBehaviour
     //PARA BUSCAR LOS AGENTES EN LA GRILLA, NECESITO UNA FUNCION QUE SEA "Query"
 
     [SerializeField] private SpatialGrid _targetGrid;
-    [SerializeField] private float _radius;
-    [SerializeField] private float _timer;
+    [SerializeField] public float radius;
 
     private void Start()
     {
@@ -39,18 +38,18 @@ public class Bomb : MonoBehaviour
 
         //creo una "caja" con las dimensiones deseadas, y luego filtro segun distancia para formar el c�rculo
         return _targetGrid.Query(
-            transform.position + new Vector3(-_radius, 0, -_radius),
-            transform.position + new Vector3(_radius, 0, _radius),
+            transform.position + new Vector3(-radius, 0, -radius),
+            transform.position + new Vector3(radius, 0, radius),
             x => {
                 var position2d = x - transform.position;
                 position2d.y = 0;
-                return position2d.sqrMagnitude < _radius * _radius;
+                return position2d.sqrMagnitude < radius * radius;
             });
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _radius);
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }
