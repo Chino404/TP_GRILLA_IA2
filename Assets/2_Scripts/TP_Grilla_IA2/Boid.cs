@@ -40,8 +40,8 @@ public class Boid : GridEntity
     {
         var entities = Query().ToFList();
         AddForce(Separation(entities, separationRadius) * SpatialGrid.Instance.weightSeparation);
-        AddForce(Alignment(entities, viewRadius) * SpatialGrid.Instance.weightAlignment);
-        AddForce(Cohesion(entities, viewRadius) * SpatialGrid.Instance.weightCohesion);
+        AddForce(Alignment(entities, separationRadius) * SpatialGrid.Instance.weightAlignment);
+        AddForce(Cohesion(entities, separationRadius) * SpatialGrid.Instance.weightCohesion);
     }
 
     public IEnumerable<GridEntity> Query()
