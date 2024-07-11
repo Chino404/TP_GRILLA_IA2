@@ -7,20 +7,25 @@ public class Boid : GridEntity
     [Header("Radios")]
     public float viewRadius;
     public float separationRadius;
+    [SerializeField] float _radius;
     [Header("Velocidades")]
     public float maxSpeed;
     public float maxForce; //La fuerza con la cual va a girar (El margen de giro)
-
+    [SerializeField]  SpatialGrid _targetGrid;
+    public Queries queries;
     void Start()
     {
         AddForce(new Vector3(Random.Range(-1f,1f), 0, Random.Range(-1f,1f)) * maxSpeed); //Se mueve a una direccion random, multplicado por la velocidad
-
+        _targetGrid = GameManager.Instance.grid;    
+       queries.targetGrid = GameManager.Instance.grid;
+        queries.radius = _radius;
         SpatialGrid.Instance.boidsList.Add(this);
     }
 
     public override void Update()
     {
         base.Update();
+
         if(Vector3.Distance(SpatialGrid.Instance.hunter.transform.position, transform.position) <= viewRadius)
             AddForce(Evade(SpatialGrid.Instance.hunter.transform.position + SpatialGrid.Instance.hunter.velocity));
 
@@ -33,12 +38,26 @@ public class Boid : GridEntity
 
     void Flocking()
     {
-        AddForce(Separation(SpatialGrid.Instance.boidsList, separationRadius) * SpatialGrid.Instance.weightSeparation);
-        AddForce(Alignment(SpatialGrid.Instance.boidsList, viewRadius) * SpatialGrid.Instance.weightAlignment);
-        AddForce(Cohesion(SpatialGrid.Instance.boidsList, viewRadius) * SpatialGrid.Instance.weightCohesion);
+        var entities = Query().ToFList();
+        AddForce(Separation(entities, separationRadius) * SpatialGrid.Instance.weightSeparation);
+        AddForce(Alignment(entities, viewRadius) * SpatialGrid.Instance.weightAlignment);
+        AddForce(Cohesion(entities, viewRadius) * SpatialGrid.Instance.weightCohesion);
     }
 
-    Vector3 Separation(List<GridEntity> boids, float radius)
+    public IEnumerable<GridEntity> Query()
+    {
+        //creo una "caja" con las dimensiones deseadas, y luego filtro segun distancia para formar el c�rculo
+        return _targetGrid.Query(
+            transform.position + new Vector3(-_radius, 0, -_radius),
+            transform.position + new Vector3(_radius, 0, _radius),
+            x => {
+                var position2d = x - transform.position;
+                position2d.y = 0;
+                return position2d.sqrMagnitude < _radius * _radius;
+            });
+    }
+
+    Vector3 Separation(IEnumerable<GridEntity> boids, float radius)
     {
         Vector3 desired = Vector3.zero; //Dir deseada
         foreach (var item in boids)
@@ -60,7 +79,7 @@ public class Boid : GridEntity
         return CalculateSteering(desired);
     }
 
-    Vector3 Alignment(List<GridEntity> boids, float radius)
+    Vector3 Alignment(IEnumerable<GridEntity> boids, float radius)
     {
         var desired = Vector3.zero;
         int count = 0;
@@ -86,7 +105,7 @@ public class Boid : GridEntity
         return CalculateSteering(desired);
     }
 
-    Vector3 Cohesion(List<GridEntity> boids, float radius) //Acercarme a la manada
+    Vector3 Cohesion(IEnumerable<GridEntity> boids, float radius) //Acercarme a la manada
     {
         var desired = transform.position; //Mi posicion
         var count = 0;
