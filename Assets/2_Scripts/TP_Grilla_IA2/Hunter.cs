@@ -8,7 +8,7 @@ public class Hunter : MonoBehaviour
     private FSM<States> _fsm;
     public Hunter hunter;
     public Bomb bombita;
-    [HideInInspector]public Vector3 velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
+    [HideInInspector] public Vector3 velocity; //Lo hice publico para que pueda modificarlo en el Patrol y poder pedirlo en el Boid
 
     public float viewRadius;
 
@@ -21,17 +21,17 @@ public class Hunter : MonoBehaviour
     //public float counterChase;
     public float counter;
 
-    [SerializeField]private Transform[] _wayPoints;
-    
+    [SerializeField] private Transform[] _wayPoints;
+
 
     public int _actualIndex;
 
     private float _closestDistance = Mathf.Infinity;
-    private Boid _currentTarget;
+    public Boid _currentTarget;
 
     private void Awake()
     {
-        if(!GameManager.Instance.hunter) GameManager.Instance.hunter = this;
+        if (!GameManager.Instance.hunter) GameManager.Instance.hunter = this;
         SetUpFSM();
     }
 
@@ -41,51 +41,53 @@ public class Hunter : MonoBehaviour
         idle.OnEnter = () => counter = counterIdle;
         idle.OnUpdate = () =>
         {
-              counter -= Time.deltaTime;
-              if (counter <= 0)
-              {
-                  _fsm.ChangeState(States.Patrol);
+            counter -= Time.deltaTime;
+            if (counter <= 0)
+            {
+                _fsm.ChangeState(States.Patrol);
                 counter = counterPatrolChase;
-              }
+            }
         };
 
         var patrol = new EventState();
         patrol.OnEnter = () => /*counter=counterPatrolChase*/ Debug.Log("entre a patrol");
         patrol.OnUpdate = () =>
         {
-              AddForce(Seek(_wayPoints[_actualIndex].position));
+            AddForce(Seek(_wayPoints[_actualIndex].position));
 
-              if (Vector3.Distance(transform.position, _wayPoints[_actualIndex].position) <= 0.3f)
-              {
-                  _actualIndex++;
-                  if (_actualIndex >= _wayPoints.Length)
-                      _actualIndex = 0;
-              }
+            if (Vector3.Distance(transform.position, _wayPoints[_actualIndex].position) <= 0.3f)
+            {
+                _actualIndex++;
+                if (_actualIndex >= _wayPoints.Length)
+                    _actualIndex = 0;
+            }
 
-              transform.position += velocity * Time.deltaTime;
-              transform.forward = velocity;
-              counter -= Time.deltaTime;
+            transform.position += velocity * Time.deltaTime;
+            transform.forward = velocity;
+            counter -= Time.deltaTime;
 
-              if (counter <= 0)
-                  _fsm.ChangeState(States.Idle);
+            if (counter <= 0)
+                _fsm.ChangeState(States.Idle);
+            var entities = bombita.Query().ToFList();
 
-              foreach (var item in SpatialGrid.Instance.boidsList)
-              {
-                  if (Vector3.Distance(item.transform.position, transform.position) <= viewRadius)
-                      _fsm.ChangeState(States.Chase);
-              }
+            foreach (var item in entities)
+            {
+                if (Vector3.Distance(item.transform.position, transform.position) <= bombita.radius)
+                    _fsm.ChangeState(States.Chase);
+            }
         };
 
         var chase = new EventState();
         chase.OnEnter = () =>
         {
             Debug.Log("entro a chase");
-        //    counter = counterChase;
+            //    counter = counterChase;
         };
 
         chase.OnUpdate = () =>
         {
-            foreach (Boid target in SpatialGrid.Instance.boidsList)
+            var entities = bombita.Query().ToFList();
+            foreach (Boid target in entities)
             {
                 float _distance = Vector3.Distance(transform.position, target.transform.position);
 
@@ -113,7 +115,7 @@ public class Hunter : MonoBehaviour
 
             else { _fsm.ChangeState(States.Patrol); }
             if (counter <= 0) _fsm.ChangeState(States.Idle);
-            if(_currentTarget!=null)if (Vector3.Distance(transform.position, _currentTarget.transform.position) > viewRadius) { _fsm.ChangeState(States.Patrol);   }
+            if (_currentTarget != null) if (Vector3.Distance(transform.position, _currentTarget.transform.position) > bombita.radius) { _fsm.ChangeState(States.Patrol); }
         };
 
         _fsm = new FSM<States>();
